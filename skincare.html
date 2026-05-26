@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HonestGlow Rejuvenating</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
+        body { background: #fefaf5; }
+        header { background: white; padding: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .logo h1 { color: #c27e4a; }
+        nav a { margin-left: 20px; text-decoration: none; color: #333; cursor: pointer; }
+        .container { max-width: 1200px; margin: auto; padding: 20px; }
+        .page { display: none; }
+        .active-page { display: block; }
+        .product-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; justify-content: center; }
+        .product-card { background: white; border-radius: 10px; padding: 15px; width: 200px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .product-img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; }
+        .product-price { color: #c27e4a; font-weight: bold; margin: 10px 0; }
+        .add-cart-btn { background: #c27e4a; color: white; border: none; padding: 8px; border-radius: 20px; cursor: pointer; width: 100%; }
+        .cart-icon { cursor: pointer; }
+        .cart-count { background: #c27e4a; color: white; border-radius: 50%; padding: 2px 8px; margin-left: 5px; }
+        .detail-container { display: flex; gap: 20px; background: white; padding: 20px; border-radius: 10px; flex-wrap: wrap; }
+        .detail-specs { background: #f9ede3; padding: 15px; border-radius: 10px; margin-top: 15px; }
+        .detail-specs p { margin: 8px 0; font-size: 14px; }
+        .cart-table { width: 100%; border-collapse: collapse; }
+        .cart-table th, .cart-table td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+        .checkout-form { margin-top: 20px; background: white; padding: 20px; border-radius: 10px; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ddd; }
+        .btn { background: #c27e4a; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+        footer { text-align: center; padding: 20px; background: #f7ede4; margin-top: 20px; }
+        @media (max-width: 768px) { header { flex-direction: column; text-align: center; gap: 10px; } nav { margin-top: 10px; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><h1>✨ HonestGlow Rejuvenating</h1><p>No duplicates • One unique skincare ritual</p></div>
+    <nav>
+        <a data-nav="home">Home</a>
+        <a data-nav="shop">Shop</a>
+        <div class="cart-icon" id="cartIconBtn">🛒 Cart <span class="cart-count" id="cartCount">0</span></div>
+    </nav>
+</header>
+
+<div class="container">
+    <div id="homePage" class="page active-page">
+        <h2>Rejuvenate. Restore. One Honest Glow.</h2>
+        <p>No two products are the same — each formula tells a different story.</p>
+        <button class="btn" id="heroShopBtn">Shop now →</button>
+        <div id="featuredGrid" class="product-grid"></div>
+    </div>
+
+    <div id="shopPage" class="page">
+        <h2>All products</h2>
+        <div id="allProductsGrid" class="product-grid"></div>
+    </div>
+
+    <div id="detailPage" class="page">
+        <button class="btn" id="backToShopBtn">← Back</button>
+        <div id="productDetailContainer"></div>
+    </div>
+
+    <div id="cartPage" class="page">
+        <h2>Your Cart</h2>
+        <div id="cartItemsContainer"></div>
+        <div class="checkout-form">
+            <h3>Checkout</h3>
+            <form id="checkoutForm">
+                <input type="text" placeholder="Full name" id="fullName" required>
+                <input type="email" placeholder="Email" id="email" required>
+                <textarea rows="2" placeholder="Address"></textarea>
+                <button type="submit" class="btn">Place Order</button>
+            </form>
+            <p id="orderMsg"></p>
+        </div>
+    </div>
+</div>
+
+<footer>© HonestGlow Rejuvenating — each product unique by design.</footer>
+
+<script>
+    const products = [
+        { 
+            id: 1, name: "Glass Skin Serum", brand: "HonestGlow", price: 2.11, image: "Serum.jpg", 
+            description: "Rejuvenating serum that gives a smooth, glass-like shine.",
+            benefits: "Rejuvenates skin, gives glass-like glow, reduces blackheads",
+            ingredients: "Niacinamide, Hyaluronic Acid, Repairatory Extract",
+            bestFor: "All skin types, especially dull or tired skin",
+            howToUse: "Apply 2-3 drops on clean face morning and night",
+            size: "30ml"
+        },
+        { 
+            id: 2, name: "Fresh Night Cream", brand: "HonestGlow", price: 3.17, image: "Cream.jpg", 
+            description: "Whitens, repairs, and restores skin while you sleep.",
+            benefits: "Whitens, repairs, restores skin while sleeping",
+            ingredients: "Ceramides, Peptides",
+            bestFor: "Dry or damaged skin, overnight repair",
+            howToUse: "Apply on face and neck before bedtime",
+            size: "50g"
+        },
+        { 
+            id: 3, name: "Face & Body Soap", brand: "HonestGlow", price: 0.95, image: "Soap.jpg", 
+            description: "Whiten, brighten and moisturize face and body.",
+            benefits: "Whitens, brightens, moisturizes",
+            ingredients: "Honey, Glycerin, Natural Oils",
+            bestFor: "Face and body daily use",
+            howToUse: "Lather with water, apply on wet skin, rinse thoroughly",
+            size: "100g bar"
+        },
+        { 
+            id: 4, name: "Aloe Ice Toner", brand: "HonestGlow", price: 1.14, image: "Toner.jpg", 
+            description: "Cooling aloe vera toner with calming properties.",
+            benefits: "Brightens skin, prevents pimples, fights excess oil",
+            ingredients: "Aloe Vera, Calming Extracts",
+            bestFor: "Oily and acne-prone skin",
+            howToUse: "Apply on cotton pad and wipe on face after cleansing",
+            size: "60ml"
+        },
+        { 
+            id: 5, name: "Daily Sunscreen", brand: "HonestGlow", price: 2.94, image: "Sunscreen.jpg", 
+            description: "SPF 50+ PA++++ broad spectrum protection.",
+            benefits: "UVA/UVB protection, smoothens, moisturizes",
+            ingredients: "SPF 50+, PA++++",
+            bestFor: "Daily use, all skin types",
+            howToUse: "Apply generously on face and body 15 minutes before sun exposure",
+            size: "50g"
+        },
+        { 
+            id: 6, name: "Glow Capsule", brand: "HonestGlow", price: 10.94, image: "Capsule.jpg", 
+            description: "Popular skincare supplement that combines Glutathione, Marine Collagen, Vitamin C, and Oral Sunblock.",
+            benefits: "Whitens from within, boosts collagen, protects skin from UV damage, antioxidant",
+            ingredients: "Glutathione, Marine Collagen, Vitamin C, Oral Sunblock",
+            bestFor: "Those who want internal skin whitening and protection",
+            howToUse: "Take 1 capsule daily with water after meal",
+            size: "30 capsules per bottle"
+        },
+        { 
+            id: 7, name: "24K Gold Papaya", brand: "HonestGlow", price: 8.62, image: "Papaya.jpg", 
+            description: "A popular, hydrating, and brightening skincare product. Designed to brighten dull areas, reduce dark spots, and give your skin a radiant 'glass skin' effect.",
+            benefits: "Hydration (Hyaluronic Acid), Skin Barrier Repair (Ceramides), Brightening (Niacinamide & Papaya Extract), Anti-Aging & Radiance (24K Gold particles to stimulate collagen synthesis)",
+            ingredients: "24K Gold Particles, Papaya Extract, Niacinamide, Hyaluronic Acid, Ceramides",
+            bestFor: "Face",
+            howToUse: "Cleanse and tone your face. Apply a few drops of the serum onto your fingertips. Gently massage it into your face and neck until fully absorbed. Can be safely layered with other products or used alongside mild skincare and rejuvenating sets.",
+            size: "30ml"
+        }
+    ];
+
+    let cart = [];
+
+    function saveCart() { localStorage.setItem("cart", JSON.stringify(cart)); updateCount(); }
+    function loadCart() { const stored = localStorage.getItem("cart"); if(stored) cart = JSON.parse(stored); updateCount(); }
+    function updateCount() { let total = 0; cart.forEach(i => total += i.quantity); document.getElementById("cartCount").innerText = total; }
+    function getProduct(id) { return products.find(p => p.id === id); }
+
+    function addToCart(id) {
+        let item = cart.find(i => i.id === id);
+        if(item) item.quantity++;
+        else cart.push({ id: id, quantity: 1 });
+        saveCart();
+        alert("Added to cart!");
+        if(document.getElementById("cartPage").classList.contains("active-page")) renderCart();
+    }
+
+    function updateQty(id, qty) {
+        let item = cart.find(i => i.id === id);
+        if(item) { if(qty <= 0) cart = cart.filter(i => i.id !== id); else item.quantity = qty; saveCart(); renderCart(); }
+    }
+    function removeItem(id) { cart = cart.filter(i => i.id !== id); saveCart(); renderCart(); }
+
+    function renderProductCard(p, withBtn = true) {
+        let card = document.createElement("div");
+        card.className = "product-card";
+        card.onclick = (e) => { if(!e.target.classList.contains("add-cart-btn")) showDetail(p.id); };
+        card.innerHTML = `<img class="product-img" src="${p.image}" onerror="this.src='https://placehold.co/200x200?text='+p.name"><div class="product-brand">${p.brand}</div><div class="product-name">${p.name}</div><div class="product-price">$${p.price}</div>${withBtn ? `<button class="add-cart-btn" data-id="${p.id}">➕ Add to cart</button>` : ""}`;
+        if(withBtn) card.querySelector(".add-cart-btn").onclick = (e) => { e.stopPropagation(); addToCart(p.id); };
+        return card;
+    }
+
+    function renderFeatured() { let container = document.getElementById("featuredGrid"); container.innerHTML = ""; products.slice(0,3).forEach(p => container.appendChild(renderProductCard(p, true))); }
+    function renderAll() { let container = document.getElementById("allProductsGrid"); container.innerHTML = ""; products.forEach(p => container.appendChild(renderProductCard(p, true))); }
+
+    function showDetail(id) {
+        let p = getProduct(id);
+        document.getElementById("productDetailContainer").innerHTML = `
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <img src="${p.image}" width="250" style="border-radius:10px;" onerror="this.src='https://placehold.co/250x250?text='+p.name">
+                <div style="flex:1;">
+                    <h2>${p.name}</h2>
+                    <p style="color:#b98f70;">${p.brand}</p>
+                    <p>${p.description}</p>
+                    <h3 style="color:#c27e4a;">$${p.price}</h3>
+                    <button class="btn" id="detailAddBtn" style="margin:10px 0;">Add to cart</button>
+                    <div class="detail-specs">
+                        <p><strong>✨ Benefits:</strong> ${p.benefits}</p>
+                        <p><strong>🌿 Key Ingredients:</strong> ${p.ingredients}</p>
+                        <p><strong>👤 Best For:</strong> ${p.bestFor}</p>
+                        <p><strong>💧 How to Use:</strong> ${p.howToUse}</p>
+                        <p><strong>📦 Size:</strong> ${p.size}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById("detailAddBtn").onclick = () => addToCart(id);
+        setPage("detailPage");
+    }
+
+    function renderCart() {
+        let container = document.getElementById("cartItemsContainer");
+        if(cart.length === 0) { container.innerHTML = "<p>Cart is empty.</p>"; return; }
+        let total = 0, html = "<table class='cart-table'><tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr>";
+        cart.forEach(item => { let p = getProduct(item.id); let sub = p.price * item.quantity; total += sub; html += `<tr><td>${p.name}</td><td>$${p.price}</td><td><input type="number" class="qty-input" data-id="${p.id}" value="${item.quantity}" min="1" style="width:60px"></td><td>$${sub}</td><td><button class="remove-btn" data-id="${p.id}">🗑️</button></td></tr>`; });
+        html += `<tr><h3>Total: $${total}</h3>`;
+        container.innerHTML = html;
+        document.querySelectorAll(".qty-input").forEach(inp => inp.onchange = (e) => updateQty(parseInt(inp.dataset.id), parseInt(inp.value)));
+        document.querySelectorAll(".remove-btn").forEach(btn => btn.onclick = (e) => removeItem(parseInt(btn.dataset.id)));
+    }
+
+    function setPage(pageId) {
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("active-page"));
+        document.getElementById(pageId).classList.add("active-page");
+        if(pageId === "cartPage") renderCart();
+        if(pageId === "shopPage") renderAll();
+        if(pageId === "homePage") renderFeatured();
+    }
+
+    function attachNav() {
+        document.querySelectorAll("[data-nav]").forEach(link => link.onclick = (e) => { e.preventDefault(); let t = link.getAttribute("data-nav"); if(t === "home") setPage("homePage"); else if(t === "shop") setPage("shopPage"); else if(t === "cart") setPage("cartPage"); }); 
+        document.getElementById("heroShopBtn").onclick = () => setPage("shopPage");
+        document.getElementById("backToShopBtn").onclick = () => setPage("shopPage");
+        document.getElementById("cartIconBtn").onclick = () => setPage("cartPage");
+    }
+
+    document.getElementById("checkoutForm").onsubmit = function(e) { e.preventDefault(); let name = document.getElementById("fullName").value; if(!name) { alert("Enter name"); return; } if(cart.length === 0) { alert("Cart empty"); return; } document.getElementById("orderMsg").innerHTML = `✅ Order placed, ${name}! Thank you.`; cart = []; saveCart(); renderCart(); this.reset(); setTimeout(() => document.getElementById("orderMsg").innerHTML = "", 3000); };
+
+    loadCart(); renderFeatured(); attachNav(); setPage("homePage");
+</script>
+</body>
+</html>
